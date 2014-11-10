@@ -44,9 +44,14 @@ class SmsAero extends \yii\base\Component {
     public $sendersUrl = 'https://gate.smsaero.ru/senders/';
 
     /**
+     * @var string
+     */
+    public $signUrl = 'https://gate.smsaero.ru/sign/';
+
+    /**
      * @var array
      */
-    protected  $query = [];
+    protected $query = [];
 
     /**
      * @inheritdoc
@@ -113,7 +118,7 @@ class SmsAero extends \yii\base\Component {
 
     /**
      * Get balance
-     * @return string
+     * @return array
      * @throws Exception
      */
     public function balance()
@@ -122,7 +127,7 @@ class SmsAero extends \yii\base\Component {
         if(!array_key_exists('balance', $data)) {
             throw new Exception('SmsAero. Failed to get the balance');
         }
-        return $data['balance'];
+        return $data;
     }
 
     /**
@@ -133,5 +138,17 @@ class SmsAero extends \yii\base\Component {
     public function senders()
     {
         return $this->request($this->sendersUrl);
+    }
+
+    /**
+     * Request new signature
+     * @param $name
+     * @return array
+     * @throws Exception
+     */
+    public function sign($name)
+    {
+        $this->query['sign'] = $name;
+        return $this->request($this->signUrl);
     }
 }
