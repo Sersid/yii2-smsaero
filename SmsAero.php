@@ -13,29 +13,35 @@ use yii\base\Exception;
  */
 class SmsAero extends \yii\base\Component {
     /**
-     * @var string Username
+     * @var string
      */
     public $user;
 
     /**
-     * @var string Password
+     * @var string
      */
     public $password;
 
     /**
-     * @var string Signature of sender
+     * Default signature of sender
+     * @var string
      */
-    public $from = 'INFORM';
+    public $sender = 'INFORM';
 
     /**
-     * @var string Send url
+     * @var string
      */
     public $sendUrl = 'https://gate.smsaero.ru/send/';
 
     /**
-     * @var string Balance url
+     * @var string
      */
     public $balanceUrl = 'https://gate.smsaero.ru/balance/';
+
+    /**
+     * @var string
+     */
+    public $sendersUrl = 'https://gate.smsaero.ru/senders/';
 
     /**
      * @var array
@@ -65,6 +71,22 @@ class SmsAero extends \yii\base\Component {
     }
 
     /**
+     * @param $url string Url
+     * @return array
+     * @throws Exception
+     */
+    protected function request($url)
+    {
+        $data = file_get_contents($url.'?'.http_build_query($this->query));
+        $arr = \yii\helpers\Json::decode($data);
+        if(isset($arr['result']) && $arr['result'] == 'reject') {
+            $mess = isset($arr['reason']) ? ': '.$arr['reason'] : '';
+            throw new Exception('SmsAero. '.$arr['result'].$mess);
+        }
+        return $arr;
+    }
+
+    /**
      * Send sms
      * @param $to Recipient's phone number in the format 71234567890
      * @param $text Text messages in UTF-8 encoding
@@ -75,7 +97,7 @@ class SmsAero extends \yii\base\Component {
     public function send($to, $text, $from = null, $date = null)
     {
         if($from === null) {
-            $from = $this->from;
+            $from = $this->sender;
         }
 
         if($date !== null) {
@@ -104,18 +126,12 @@ class SmsAero extends \yii\base\Component {
     }
 
     /**
-     * @param $url string Url
+     * Senders
      * @return array
      * @throws Exception
      */
-    protected function request($url)
+    public function senders()
     {
-        $data = file_get_contents($url.'?'.http_build_query($this->query));
-        $arr = \yii\helpers\Json::decode($data);
-        if(isset($arr['result']) && $arr['result'] == 'reject') {
-            $mess = isset($arr['reason']) ? ': '.$arr['reason'] : '';
-            throw new Exception('SmsAero. '.$arr['result'].$mess);
-        }
-        return $arr;
+        return $this->request($this->sendersUrl);
     }
 }
