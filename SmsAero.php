@@ -30,12 +30,17 @@ class SmsAero extends \yii\base\Component {
     /**
      * @var string Send url
      */
-    public $sendUrl = "http://gate.smsaero.ru/send/";
+    public $sendUrl = 'https://gate.smsaero.ru/send/';
+
+    /**
+     * @var string Balance url
+     */
+    public $balanceUrl = 'https://gate.smsaero.ru/balance/';
 
     /**
      * @var array
      */
-    private $_query = [];
+    protected  $query = [];
 
     /**
      * @inheritdoc
@@ -43,14 +48,14 @@ class SmsAero extends \yii\base\Component {
     public function init()
     {
         if($this->user === null) {
-            throw new Exception("SmsAero. You must enter a \"user\".");
+            throw new Exception('SmsAero. You must enter a "user".');
         }
 
         if($this->password === null) {
-            throw new Exception("SmsAero. You must enter a \"password\".");
+            throw new Exception('SmsAero. You must enter a "password".');
         }
 
-        $this->_query = [
+        $this->query = [
             'answer' => 'json',
             'user' => $this->user,
             'password' => md5($this->password),
@@ -74,23 +79,43 @@ class SmsAero extends \yii\base\Component {
         }
 
         if($date !== null) {
-            $this->_query['date'] = $date;
+            $this->query['date'] = $date;
         }
 
-        $this->_query['to'] = $to;
-        $this->_query['text'] = $text;
-        $this->_query['from'] = $from;
+        $this->query['to'] = $to;
+        $this->query['text'] = $text;
+        $this->query['from'] = $from;
 
-        return $this->_request($this->sendUrl);
+        return $this->request($this->sendUrl);
+    }
+
+    /**
+     * Get balance
+     * @return string
+     * @throws Exception
+     */
+    public function balance()
+    {
+        $data = $this->request($this->balanceUrl);
+        if(!array_key_exists('balance', $data)) {
+            throw new Exception('SmsAero. Failed to get the balance');
+        }
+        return $data['balance'];
     }
 
     /**
      * @param $url string Url
      * @return array
+     * @throws Exception
      */
-    private function _request($url)
+    protected function request($url)
     {
-        $data = file_get_contents($url.'?'.http_build_query($this->_query));
-        return \yii\helpers\Json::decode($data);
+        $data = file_get_contents($url.'?'.http_build_query($this->query));
+        $arr = \yii\helpers\Json::decode($data);
+        if(isset($arr['result']) && $arr['result'] == 'reject') {
+            $mess = isset($arr['reason']) ? ': '.$arr['reason'] : '';
+            throw new Exception('SmsAero. '.$arr['result'].$mess);
+        }
+        return $arr;
     }
 }
