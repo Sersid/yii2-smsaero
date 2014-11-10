@@ -12,13 +12,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```sh
-php composer.phar require --prefer-dist sersid/yii2-config "dev-master"
+php composer.phar require --prefer-dist sersid/yii2-smsaero "dev-master"
 ```
 
 or add
 
 ```
-"sersid/yii2-config": "dev-master"
+"sersid/yii2-smsaero": "dev-master"
 ```
 
 to the require section of your `composer.json` file.
@@ -41,6 +41,12 @@ $config = [
     ]
 ];
 ```
+
+### Three
+Read the documentation
+http://smsaero.ru/api/
+
+
 
 Usage
 -----
