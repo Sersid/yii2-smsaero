@@ -1,0 +1,21 @@
+{
+    "name": "sersid/yii2-smsaero",
+    "description": "Integration of SMS-messages to yii2 application",
+    "type": "yii2-extension",
+    "keywords": ["yii2","extension","sms"],
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Sersid",
+            "email": "sersONEd@gmail.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "sersid\\smsaero\\": ""
+        }
+    }
+}

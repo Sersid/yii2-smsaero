@@ -136,7 +136,7 @@ class SmsAero extends \yii\base\Component {
     }
 
     /**
-     * Available sender's signature
+     * available senders
      * @return array
      * @throws Exception
      */
