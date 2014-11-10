@@ -49,6 +49,11 @@ class SmsAero extends \yii\base\Component {
     public $signUrl = 'https://gate.smsaero.ru/sign/';
 
     /**
+     * @var string
+     */
+    public $statusUrl = 'http://gate.smsaero.ru/status/';
+
+    /**
      * @var array
      */
     protected $query = [];
@@ -92,7 +97,7 @@ class SmsAero extends \yii\base\Component {
     }
 
     /**
-     * Send sms
+     * Send message
      * @param $to Recipient's phone number in the format 71234567890
      * @param $text Text messages in UTF-8 encoding
      * @param string $from Signature of the sender (eg INFORM)
@@ -131,7 +136,7 @@ class SmsAero extends \yii\base\Component {
     }
 
     /**
-     * Senders
+     * Available sender's signature
      * @return array
      * @throws Exception
      */
@@ -142,7 +147,7 @@ class SmsAero extends \yii\base\Component {
 
     /**
      * Request new signature
-     * @param $name
+     * @param $name signature name
      * @return array
      * @throws Exception
      */
@@ -150,5 +155,17 @@ class SmsAero extends \yii\base\Component {
     {
         $this->query['sign'] = $name;
         return $this->request($this->signUrl);
+    }
+
+    /**
+     * Checking the status of the sent message
+     * @param $id integer message identifier that is returned when you send the message service
+     * @return array
+     * @throws Exception
+     */
+    public function status($id)
+    {
+        $this->query['id'] = $id;
+        return $this->request($this->statusUrl);
     }
 }
