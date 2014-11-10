@@ -1,4 +1,4 @@
-Yii2 SmsAero
+Yii2 Sms Aero
 ======
 http://smsaero.ru/
 Integration of SMS-messages to yii2 application

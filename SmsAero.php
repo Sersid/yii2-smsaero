@@ -5,7 +5,7 @@ use Yii;
 use yii\base\Exception;
 
 /**
- * SmsAero component
+ * Sms Aero component
  * @url http://smsaero.ru/
  * @author Sersid <sersONEd@gmail.com>
  * @copyright Copyright &copy; www.sersid.ru 2014
