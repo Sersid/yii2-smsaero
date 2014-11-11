@@ -93,6 +93,14 @@ class SmsAero extends \yii\base\Component {
             $mess = isset($arr['reason']) ? ': '.$arr['reason'] : '';
             throw new Exception('SmsAero. '.$arr['result'].$mess);
         }
+
+        $query = $this->query;
+        unset($query['user'], $query['password'], $query['answer']);
+        if(!empty($query)) {
+            $url .= "?".http_build_query($query);
+        }
+        Yii::info("Url: ".$url."\nData: {$data}", __METHOD__);
+
         return $arr;
     }
 
