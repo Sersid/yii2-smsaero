@@ -99,7 +99,7 @@ class SmsAero extends \yii\base\Component {
         if(!empty($query)) {
             $url .= "?".http_build_query($query);
         }
-        Yii::info("Url: ".$url."\nData: {$data}", __METHOD__);
+        Yii::info("Url: {$url}\nData: {$data}", __METHOD__);
 
         return $arr;
     }
