@@ -89,11 +89,6 @@ class SmsAero extends \yii\base\Component {
     {
         $data = file_get_contents($url.'?'.http_build_query($this->query));
         $arr = \yii\helpers\Json::decode($data);
-        if(isset($arr['result']) && $arr['result'] == 'reject') {
-            $mess = isset($arr['reason']) ? ': '.$arr['reason'] : '';
-            throw new Exception('SmsAero. '.$arr['result'].$mess);
-        }
-
         $query = $this->query;
         unset($query['user'], $query['password'], $query['answer']);
         if(!empty($query)) {
