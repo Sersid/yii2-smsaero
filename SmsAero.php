@@ -31,6 +31,11 @@ class SmsAero extends \yii\base\Component {
     /**
      * @var string
      */
+    public $answer = 'json';
+
+    /**
+     * @var string
+     */
     public $sendUrl = 'https://gate.smsaero.ru/send/';
 
     /**
@@ -71,13 +76,22 @@ class SmsAero extends \yii\base\Component {
             throw new Exception('SmsAero. You must enter a "password".');
         }
 
-        $this->query = [
-            'answer' => 'json',
+        parent::init();
+    }
+
+    /**
+     * Get query
+     * @return array
+     */
+    public function getQuery()
+    {
+        $this->query = array_merge([
+            'answer' => $this->answer,
             'user' => $this->user,
             'password' => md5($this->password),
-        ];
+        ], $this->query);
 
-        parent::init();
+        return $this->query;
     }
 
     /**
@@ -87,7 +101,7 @@ class SmsAero extends \yii\base\Component {
      */
     protected function request($url)
     {
-        $data = file_get_contents($url.'?'.http_build_query($this->query));
+        $data = file_get_contents($url.'?'.http_build_query($this->getQuery()));
         $arr = \yii\helpers\Json::decode($data);
         if(isset($arr['result']) && $arr['result'] == 'reject') {
             $mess = isset($arr['reason']) ? ': '.$arr['reason'] : '';
