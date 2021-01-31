@@ -1,6 +1,6 @@
 Yii2 Sms Aero
 ======
-http://smsaero.ru/
+https://smsaero.ru/api/v1/
 Integration of SMS-messages to yii2 application
 
 Installation
@@ -35,8 +35,9 @@ $config = [
         'sms' => [
             'class' => 'sersid\smsaero\SmsAero',
             'user' => 'username',
-            'password' => '*****',
-            'sender' => 'INFORM', // default sender
+            //'password' => '*****',
+            'api_key' => 'paste_your_api_key' // use api_key or password
+            'sender' => 'SMS Aero', // default sender
         ],
     ]
 ];
