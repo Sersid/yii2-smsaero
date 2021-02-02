@@ -11,7 +11,12 @@ use yii\base\Exception;
  * @copyright Copyright &copy; www.sersid.ru 2014
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
-class SmsAero extends \yii\base\Component {
+class SmsAero extends \yii\base\Component 
+{
+    const HLR_STATUS_AVAILABLE = 1;
+    const HLR_STATUS_UNAVAILABLE = 2;
+    const HLR_STATUS_NOT_EXIST = 3;
+
     /**
      * @var string
      */
@@ -21,6 +26,11 @@ class SmsAero extends \yii\base\Component {
      * @var string
      */
     public $password;
+
+    /**
+     * @var string
+     */
+    public $api_key;
 
     /**
      * Default signature of sender
@@ -59,6 +69,16 @@ class SmsAero extends \yii\base\Component {
     public $statusUrl = 'http://gate.smsaero.ru/status/';
 
     /**
+     * @var string
+     */
+    public $hlrUrl = 'http://gate.smsaero.ru/hlr/';
+
+    /**
+     * @var string
+     */
+    public $hlrStatusUrl = 'http://gate.smsaero.ru/hlrStatus/';
+
+    /**
      * @var array
      */
     protected $query = [];
@@ -68,12 +88,12 @@ class SmsAero extends \yii\base\Component {
      */
     public function init()
     {
-        if($this->user === null) {
-            throw new Exception('SmsAero. You must enter a "user".');
+        if ($this->user === null) {
+            throw new Exception('SmsAero. You must specify a "user".');
         }
 
-        if($this->password === null) {
-            throw new Exception('SmsAero. You must enter a "password".');
+        if ($this->password === null && $this->api_key === null) {
+            throw new Exception('SmsAero. You must specify a "password" or "api_key".');
         }
 
         parent::init();
@@ -85,10 +105,14 @@ class SmsAero extends \yii\base\Component {
      */
     public function getQuery()
     {
+        $pwd = $this->api_key;
+        if ($this->password) {
+            $pwd = md5($this->password);
+        }
         $this->query = array_merge([
             'answer' => $this->answer,
             'user' => $this->user,
-            'password' => md5($this->password),
+            'password' => $pwd,
         ], $this->query);
 
         return $this->query;
@@ -189,5 +213,29 @@ class SmsAero extends \yii\base\Component {
     {
         $this->query['id'] = $id;
         return $this->request($this->statusUrl);
+    }
+
+    /**
+     * Send HLR status request
+     * @param $phone string phone number in the format 71234567890
+     * @return array
+     * @throws Exception
+     */
+    public function hlr($phone)
+    {
+        $this->query['phone'] = $phone;
+        return $this->request($this->hlrUrl);
+    }
+
+    /**
+     * Checking HLR status result
+     * @param $phone string phone number in the format 71234567890
+     * @return array
+     * @throws Exception
+     */
+    public function hlrStatus($id)
+    {
+        $this->query['id'] = $id;
+        return $this->request($this->hlrStatusUrl);
     }
 }
